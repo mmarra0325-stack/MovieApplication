@@ -42,7 +42,7 @@ fun NavigationGraph() {
                 BottomNavigationBar(
                     items = listOf(BottomNavItem.Movies),
                     selectedItem = BottomNavItem.Movies,
-                    onItemSelected = { /* Only one item, no-op */ }
+                    onItemSelected = {  }
                 )
             }
         }
@@ -70,8 +70,7 @@ fun NavigationGraph() {
                     is MovieDetail -> NavEntry(key) {
                         MovieDetailScreen(
                             movieId = key.id,
-                            onBack = { backStack.removeLastOrNull() },
-                            modifier = Modifier.padding(innerPadding)
+                            modifier = Modifier
                         )
                     }
 

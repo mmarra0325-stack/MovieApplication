@@ -2,6 +2,7 @@ package com.mmarra.movie.data.repository
 
 import com.mmarra.movie.model.Country
 import com.mmarra.movie.model.Genre
+import com.mmarra.movie.model.Image
 import com.mmarra.movie.model.Movie
 import com.mmarra.movie.model.Rating
 import com.mmarra.movie.model.Sex
@@ -20,7 +21,10 @@ class MockMovieRepository @Inject constructor() : MovieRepository {
                 enName = "Inception",
                 year = 2010,
                 rating = Rating(kp = 8.7, imdb = 8.8),
-                poster = null,
+                poster = Image(
+                    url = "https://play-lh.googleusercontent.com/buKf27Hxendp3tLNpNtP3E-amP0o4yYV-SGKyS2u-Y3GdGRTyfNCIT5WAVs2OudOz6so5K1jtYdAUKI9nw8",
+                    previewUrl = "https://play-lh.googleusercontent.com/buKf27Hxendp3tLNpNtP3E-amP0o4yYV-SGKyS2u-Y3GdGRTyfNCIT5WAVs2OudOz6so5K1jtYdAUKI9nw8"
+                ),
                 genres = listOf(
                     Genre("Sci-Fi"),
                     Genre("Thriller")
@@ -38,7 +42,10 @@ class MockMovieRepository @Inject constructor() : MovieRepository {
                 enName = "The Matrix",
                 year = 1999,
                 rating = Rating(kp = 8.2, imdb = 8.7),
-                poster = null,
+                poster = Image(
+                    url = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSA1vgOSJxD6htWgKPPHcwGZfqZ9B5ezYgrFA&s",
+                    previewUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSA1vgOSJxD6htWgKPPHcwGZfqZ9B5ezYgrFA&s"
+                ),
                 genres = listOf(
                     Genre("Action"),
                     Genre("Sci-Fi")
@@ -62,7 +69,10 @@ class MockMovieRepository @Inject constructor() : MovieRepository {
                 enName = "Inception",
                 year = 2010,
                 rating = Rating(kp = 8.7, imdb = 8.8),
-                poster = null,
+                poster = Image(
+                    url = "https://play-lh.googleusercontent.com/buKf27Hxendp3tLNpNtP3E-amP0o4yYV-SGKyS2u-Y3GdGRTyfNCIT5WAVs2OudOz6so5K1jtYdAUKI9nw8",
+                    previewUrl = "https://play-lh.googleusercontent.com/buKf27Hxendp3tLNpNtP3E-amP0o4yYV-SGKyS2u-Y3GdGRTyfNCIT5WAVs2OudOz6so5K1jtYdAUKI9nw8"
+                ),
                 genres = listOf(
                     Genre("Sci-Fi"),
                     Genre("Thriller")
@@ -99,7 +109,10 @@ class MockMovieRepository @Inject constructor() : MovieRepository {
                 enName = "The Matrix",
                 year = 1999,
                 rating = Rating(kp = 8.2, imdb = 8.7),
-                poster = null,
+                poster = Image(
+                    url = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSA1vgOSJxD6htWgKPPHcwGZfqZ9B5ezYgrFA&s",
+                    previewUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSA1vgOSJxD6htWgKPPHcwGZfqZ9B5ezYgrFA&s"
+                ),
                 genres = listOf(
                     Genre("Action"),
                     Genre("Sci-Fi")
