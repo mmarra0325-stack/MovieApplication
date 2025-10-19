@@ -1,7 +1,7 @@
 package com.mmarra.movie.di
 
-import com.mmarra.movie.data.repository.MockMovieRepository
 import com.mmarra.movie.data.repository.MovieRepository
+import com.mmarra.movie.data.repository.NetworkMovieRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -15,6 +15,7 @@ abstract class AppModule {
     @Binds
     @Singleton
     abstract fun bindMovieRepository(
-        mockMovieRepository: MockMovieRepository
+        networkMovieRepository: NetworkMovieRepository
     ): MovieRepository
+
 }
