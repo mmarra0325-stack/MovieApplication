@@ -70,7 +70,7 @@ fun NavigationGraph() {
                     is MovieDetail -> NavEntry(key) {
                         MovieDetailScreen(
                             movieId = key.id,
-                            modifier = Modifier
+                            modifier = Modifier.padding(top = innerPadding.calculateTopPadding())
                         )
                     }
 
