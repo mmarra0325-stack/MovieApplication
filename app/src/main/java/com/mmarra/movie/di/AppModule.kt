@@ -1,6 +1,6 @@
 package com.mmarra.movie.di
 
-import com.mmarra.movie.data.repository.MovieRepository
+import com.mmarra.movie.domain.repository.MovieRepository
 import com.mmarra.movie.data.repository.NetworkMovieRepository
 import dagger.Binds
 import dagger.Module

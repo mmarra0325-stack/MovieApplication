@@ -1,12 +1,12 @@
 //package com.mmarra.movie.data.repository
 //
-//import com.mmarra.movie.model.Country
-//import com.mmarra.movie.model.Genre
-//import com.mmarra.movie.model.Image
-//import com.mmarra.movie.model.Movie
-//import com.mmarra.movie.model.Rating
-//import com.mmarra.movie.model.Sex
-//import com.mmarra.movie.model.Person
+//import com.mmarra.movie.domain.model.Country
+//import com.mmarra.movie.domain.model.Genre
+//import com.mmarra.movie.domain.model.Image
+//import com.mmarra.movie.domain.model.Movie
+//import com.mmarra.movie.domain.model.Rating
+//import com.mmarra.movie.domain.model.Sex
+//import com.mmarra.movie.domain.model.Person
 //import kotlinx.coroutines.delay
 //import javax.inject.Inject
 //

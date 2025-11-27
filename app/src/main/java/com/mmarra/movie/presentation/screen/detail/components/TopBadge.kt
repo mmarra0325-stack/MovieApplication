@@ -1,4 +1,4 @@
-package com.mmarra.movie.ui.screen.detail.components
+package com.mmarra.movie.presentation.screen.detail.components
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer

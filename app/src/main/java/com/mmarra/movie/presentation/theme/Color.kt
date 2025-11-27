@@ -1,4 +1,4 @@
-package com.mmarra.movie.ui.theme
+package com.mmarra.movie.presentation.theme
 
 import androidx.compose.ui.graphics.Color
 

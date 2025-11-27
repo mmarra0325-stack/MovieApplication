@@ -1,5 +1,7 @@
 package com.mmarra.movie.data.network.mappers
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import com.mmarra.movie.data.network.dto.ImageDto
 import com.mmarra.movie.data.network.dto.MovieDto
 import com.mmarra.movie.data.network.dto.MovieObjectResponse
@@ -8,20 +10,21 @@ import com.mmarra.movie.data.network.dto.RatingDto
 import com.mmarra.movie.data.network.dto.SimilarMovieDto
 import com.mmarra.movie.data.network.dto.TrailerDto
 import com.mmarra.movie.data.network.dto.VideosDto
-import com.mmarra.movie.model.Country
-import com.mmarra.movie.model.Genre
-import com.mmarra.movie.model.Image
-import com.mmarra.movie.model.Movie
-import com.mmarra.movie.model.Name
-import com.mmarra.movie.model.Person
-import com.mmarra.movie.model.Rating
-import com.mmarra.movie.model.Sex
-import com.mmarra.movie.model.SimilarMovie
-import com.mmarra.movie.model.Trailer
-import com.mmarra.movie.model.Videos
+import com.mmarra.movie.domain.model.Country
+import com.mmarra.movie.domain.model.Genre
+import com.mmarra.movie.domain.model.Image
+import com.mmarra.movie.domain.model.Movie
+import com.mmarra.movie.domain.model.Name
+import com.mmarra.movie.domain.model.Person
+import com.mmarra.movie.domain.model.Rating
+import com.mmarra.movie.domain.model.Sex
+import com.mmarra.movie.domain.model.SimilarMovie
+import com.mmarra.movie.domain.model.Trailer
+import com.mmarra.movie.domain.model.Videos
 import java.time.Instant
 import java.time.format.DateTimeParseException
 
+@RequiresApi(Build.VERSION_CODES.O)
 fun MovieDto.toDomain(): Movie = Movie(
     id = id,
     name = name,
@@ -50,6 +53,7 @@ fun MovieDto.toDomain(): Movie = Movie(
     createdAt = createdAt.toInstantOrNull()
 )
 
+@RequiresApi(Build.VERSION_CODES.O)
 fun MovieObjectResponse.toDomain(): Movie = Movie(
     id = id,
     name = name,
@@ -121,6 +125,7 @@ fun PersonDto.toDomain(): Person {
     )
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 private fun String?.toInstantOrNull(): Instant? =
     try {
         this?.let { Instant.parse(it) }

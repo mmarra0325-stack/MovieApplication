@@ -1,4 +1,4 @@
-package com.mmarra.movie.model
+package com.mmarra.movie.domain.model
 
 import java.time.Instant
 

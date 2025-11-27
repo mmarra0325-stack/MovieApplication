@@ -1,9 +1,9 @@
-package com.mmarra.movie.ui.screen.list
+package com.mmarra.movie.presentation.screen.list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mmarra.movie.data.repository.MovieRepository
-import com.mmarra.movie.model.Movie
+import com.mmarra.movie.domain.repository.MovieRepository
+import com.mmarra.movie.domain.model.Movie
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

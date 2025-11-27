@@ -1,4 +1,4 @@
-package com.mmarra.movie.ui.screen.detail.components
+package com.mmarra.movie.presentation.screen.detail.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,14 +12,15 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.mmarra.movie.model.Person
+import com.mmarra.movie.domain.model.SimilarMovie
 
 @Composable
-fun PersonCard(person: Person) {
+fun SimilarMovieCard(movie: SimilarMovie) {
     Card(
         modifier = Modifier.width(120.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
@@ -28,44 +29,34 @@ fun PersonCard(person: Person) {
             modifier = Modifier.padding(8.dp),
             verticalArrangement = Arrangement.spacedBy(6.dp)
         ) {
-            person.photo?.let { url ->
+            movie.poster?.previewUrl?.let { url ->
                 AsyncImage(
                     model = url,
-                    contentDescription = person.name,
+                    contentDescription = movie.name,
                     modifier = Modifier
                         .width(104.dp)
-                        .height(104.dp)
+                        .height(140.dp),
+                    contentScale = ContentScale.Crop
                 )
             } ?: Surface(
                 modifier = Modifier
                     .width(104.dp)
-                    .height(104.dp),
+                    .height(140.dp),
                 color = MaterialTheme.colorScheme.surfaceVariant
             ) {}
             Text(
-                text = person.name,
-                style = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.Medium,
+                text = movie.name ?: movie.alternativeName ?: movie.enName ?: "—",
+                style = MaterialTheme.typography.bodySmall,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis
             )
-            person.enName?.takeIf { it.isNotBlank() }?.let {
+            movie.rating?.kp?.let { r ->
                 Text(
-                    text = it,
+                    text = String.format("%.1f", r),
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                    fontWeight = FontWeight.Bold
                 )
             }
-            Text(
-                text = person.profession ?: "—",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
         }
     }
 }
-

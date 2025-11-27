@@ -1,6 +1,6 @@
-package com.mmarra.movie.data.repository
+package com.mmarra.movie.domain.repository
 
-import com.mmarra.movie.model.Movie
+import com.mmarra.movie.domain.model.Movie
 
 interface MovieRepository {
     suspend fun getMovies(): List<Movie>

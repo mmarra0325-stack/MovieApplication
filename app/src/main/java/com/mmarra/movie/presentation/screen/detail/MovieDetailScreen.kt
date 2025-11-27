@@ -1,4 +1,4 @@
-package com.mmarra.movie.ui.screen.detail
+package com.mmarra.movie.presentation.screen.detail
 
 import android.content.Intent
 import androidx.compose.foundation.background
@@ -43,13 +43,13 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil.compose.AsyncImage
-import com.mmarra.movie.model.Movie
-import com.mmarra.movie.model.displayTitle
-import com.mmarra.movie.ui.screen.detail.components.InfoChip
-import com.mmarra.movie.ui.screen.detail.components.PersonCard
-import com.mmarra.movie.ui.screen.detail.components.RatingChip
-import com.mmarra.movie.ui.screen.detail.components.SimilarMovieCard
-import com.mmarra.movie.ui.screen.detail.components.TopBadge
+import com.mmarra.movie.domain.model.Movie
+import com.mmarra.movie.domain.model.displayTitle
+import com.mmarra.movie.presentation.screen.detail.components.InfoChip
+import com.mmarra.movie.presentation.screen.detail.components.PersonCard
+import com.mmarra.movie.presentation.screen.detail.components.RatingChip
+import com.mmarra.movie.presentation.screen.detail.components.SimilarMovieCard
+import com.mmarra.movie.presentation.screen.detail.components.TopBadge
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter

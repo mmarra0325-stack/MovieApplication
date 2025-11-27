@@ -15,8 +15,8 @@ import androidx.navigation3.ui.NavDisplay
 import com.mmarra.movie.R
 import com.mmarra.movie.navigation.components.BottomNavigationBar
 import com.mmarra.movie.navigation.components.TopBar
-import com.mmarra.movie.ui.screen.detail.MovieDetailScreen
-import com.mmarra.movie.ui.screen.list.MovieListScreen
+import com.mmarra.movie.presentation.screen.detail.MovieDetailScreen
+import com.mmarra.movie.presentation.screen.list.MovieListScreen
 
 @Composable
 fun NavigationGraph() {

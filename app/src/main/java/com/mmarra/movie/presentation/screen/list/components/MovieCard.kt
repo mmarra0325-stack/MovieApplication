@@ -1,4 +1,4 @@
-package com.mmarra.movie.ui.screen.list.components
+package com.mmarra.movie.presentation.screen.list.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,8 +26,8 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import coil.size.Scale
-import com.mmarra.movie.model.Movie
-import com.mmarra.movie.model.displayTitle
+import com.mmarra.movie.domain.model.Movie
+import com.mmarra.movie.domain.model.displayTitle
 
 @Composable
 fun MovieCard(
@@ -172,7 +172,7 @@ fun RatingChipMini(rating: Double, label: String) {
     ) {
         Row(modifier = Modifier
             .padding(vertical = 2.dp)
-            .padding(end = 6.dp)) {
+            .padding(horizontal = 6.dp)) {
             Text(
                 text = String.format("%.1f", rating),
                 style = MaterialTheme.typography.bodySmall,

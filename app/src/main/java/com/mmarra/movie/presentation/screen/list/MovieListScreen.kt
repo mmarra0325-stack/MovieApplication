@@ -1,4 +1,4 @@
-package com.mmarra.movie.ui.screen.list
+package com.mmarra.movie.presentation.screen.list
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -30,7 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import com.mmarra.movie.ui.screen.list.components.MovieCard
+import com.mmarra.movie.presentation.screen.list.components.MovieCard
 
 @Composable
 fun MovieListScreen(
