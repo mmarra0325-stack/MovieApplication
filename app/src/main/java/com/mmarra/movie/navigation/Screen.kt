@@ -9,6 +9,9 @@ sealed class Screen(val route: String) {
     data object Movies : Screen("movies")
 
     @Serializable
+    data object Filters : Screen("filters")
+
+    @Serializable
     data object FavoriteMovies : Screen("favorite_movies")
 
     @Serializable

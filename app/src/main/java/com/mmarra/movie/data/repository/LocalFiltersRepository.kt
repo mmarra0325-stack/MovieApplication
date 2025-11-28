@@ -42,8 +42,8 @@ class LocalFiltersRepository @Inject constructor(
 
                 MovieFilters(
                     genre = genreRaw?.takeIf { it.isNotBlank() } ?: "",
-                    year = yearRaw?.toIntOrNull() ?: 2000,
-                    rating = ratingRaw?.toFloatOrNull() ?: 0f,
+                    year = yearRaw?.toIntOrNull(),
+                    rating = ratingRaw?.toFloatOrNull(),
                 )
             }
     }
@@ -51,8 +51,9 @@ class LocalFiltersRepository @Inject constructor(
     override suspend fun setFilters(filters: MovieFilters) {
         context.movieFiltersDataStore.edit { prefs ->
             prefs[Keys.GENRE] = filters.genre
-            prefs[Keys.YEAR] = filters.year.toString()
-            prefs[Keys.RATING_FROM] = filters.rating.toString()
+
+            prefs[Keys.YEAR] = filters.year?.toString() ?: ""
+            prefs[Keys.RATING_FROM] = filters.rating?.toString() ?: ""
         }
     }
 

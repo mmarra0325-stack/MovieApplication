@@ -3,7 +3,9 @@ package com.mmarra.movie.presentation.screen.list
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mmarra.movie.domain.model.Movie
+import com.mmarra.movie.domain.model.MovieFilters
 import com.mmarra.movie.domain.repository.FavoritesRepository
+import com.mmarra.movie.domain.repository.FiltersRepository
 import com.mmarra.movie.domain.repository.MovieRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,6 +20,7 @@ import javax.inject.Inject
 class MovieListViewModel @Inject constructor(
     private val movieRepository: MovieRepository,
     private val favoritesRepository: FavoritesRepository,
+    private val filtersRepository: FiltersRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(MovieListUiState())
@@ -25,6 +28,7 @@ class MovieListViewModel @Inject constructor(
 
     init {
         observeFavorites()
+        observeFilters()
         loadMovies()
     }
 
@@ -38,33 +42,152 @@ class MovieListViewModel @Inject constructor(
         }
     }
 
-    fun toggleFavorite(shortMovie: Movie) {
+    fun toggleFavorite(movie: Movie) {
         viewModelScope.launch {
-            favoritesRepository.toggleFavorite(shortMovie)
+            favoritesRepository.toggleFavorite(movie)
+        }
+    }
+
+    fun updateSearchQuery(value: String) {
+        _uiState.update { it.copy(searchQuery = value) }
+    }
+
+    fun searchMovies() {
+        viewModelScope.launch {
+            try {
+                val query = uiState.value.searchQuery
+
+                _uiState.update {
+                    it.copy(
+                        moviesState = MovieListMoviesState.Loading,
+                        currentPage = 1
+                    )
+                }
+
+                val filters = buildFilters(
+                    page = 1,
+                    query = if (query.isBlank()) null else query,
+                    movieFilters = uiState.value.filters
+                )
+
+                val movies = if (query.isNotBlank()) {
+                    movieRepository.searchMovies(query, filters)
+                } else {
+                    movieRepository.getMovies(filters)
+                }
+
+                _uiState.update {
+                    it.copy(
+                        moviesState = MovieListMoviesState.Success(movies),
+                        currentPage = 1
+                    )
+                }
+            } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(moviesState = MovieListMoviesState.Error(e.message ?: "Search error"))
+                }
+            }
+        }
+    }
+
+    private fun observeFilters() {
+        viewModelScope.launch {
+            filtersRepository.observeFilters().collect { newFilters ->
+                _uiState.update { it.copy(filters = newFilters, currentPage = 1) }
+                reloadMoviesWithFilters()
+            }
+        }
+    }
+
+    private fun reloadMoviesWithFilters() {
+        viewModelScope.launch {
+            try {
+                val query = uiState.value.searchQuery
+
+                _uiState.update { it.copy(moviesState = MovieListMoviesState.Loading) }
+
+                val filters = buildFilters(
+                    page = 1,
+                    query = if (query.isBlank()) null else query,
+                    movieFilters = uiState.value.filters
+                )
+
+                val movies = if (query.isNotBlank()) {
+                    movieRepository.searchMovies(query, filters)
+                } else {
+                    movieRepository.getMovies(filters)
+                }
+
+                _uiState.update {
+                    it.copy(
+                        moviesState = MovieListMoviesState.Success(movies),
+                        currentPage = 1
+                    )
+                }
+            } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(moviesState = MovieListMoviesState.Error(e.message ?: "Unknown error"))
+                }
+            }
+        }
+    }
+
+    private fun loadMovies() {
+        viewModelScope.launch {
+            try {
+                _uiState.update { it.copy(moviesState = MovieListMoviesState.Loading) }
+
+                val filters = buildFilters(
+                    page = 1,
+                    query = null,
+                    movieFilters = uiState.value.filters
+                )
+
+                val movies = movieRepository.getMovies(filters)
+
+                _uiState.update {
+                    it.copy(
+                        moviesState = MovieListMoviesState.Success(movies),
+                        currentPage = 1
+                    )
+                }
+            } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(moviesState = MovieListMoviesState.Error(e.message ?: "Unknown error"))
+                }
+            }
         }
     }
 
     fun loadNextPage() {
-        if (_uiState.value.isLoadingNextPage) return
+        val state = _uiState.value
+        if (state.isLoadingNextPage) return
 
         _uiState.update { it.copy(isLoadingNextPage = true) }
 
         viewModelScope.launch {
             try {
-                val nextPage = _uiState.value.currentPage + 1
-                val filters = mapOf("page" to nextPage.toString(), "limit" to "10")
+                val nextPage = state.currentPage + 1
+                val query = state.searchQuery
 
-                val nextMovies = if (_uiState.value.searchQuery != null) {
-                    movieRepository.searchMovies(_uiState.value.searchQuery!!, filters)
+                val filters = buildFilters(
+                    page = nextPage,
+                    query = if (query.isBlank()) null else query,
+                    movieFilters = state.filters
+                )
+
+                val nextMovies = if (query.isNotBlank()) {
+                    movieRepository.searchMovies(query, filters)
                 } else {
                     movieRepository.getMovies(filters)
                 }
 
-                _uiState.update { state ->
-                    val currentMovies =
-                        (state.moviesState as? MovieListMoviesState.Success)?.movies ?: emptyList()
+                val currentMovies =
+                    (uiState.value.moviesState as? MovieListMoviesState.Success)?.movies
+                        ?: emptyList()
 
-                    state.copy(
+                _uiState.update {
+                    it.copy(
                         moviesState = MovieListMoviesState.Success(currentMovies + nextMovies),
                         currentPage = nextPage,
                         isLoadingNextPage = false
@@ -76,63 +199,36 @@ class MovieListViewModel @Inject constructor(
         }
     }
 
-    fun searchMovies(query: String) {
-        viewModelScope.launch {
-            try {
-                _uiState.update {
-                    it.copy(
-                        moviesState = MovieListMoviesState.Loading,
-                        searchQuery = query.ifBlank { null },
-                    )
-                }
+    private fun buildFilters(
+        page: Int,
+        query: String?,
+        movieFilters: MovieFilters
+    ): Map<String, String> {
 
-                val movies = if (query.isBlank()) {
-                    movieRepository.getMovies()
-                } else {
-                    movieRepository.searchMovies(query)
-                }
+        val map = mutableMapOf(
+            "page" to page.toString(),
+            "limit" to "10"
+        )
 
-                _uiState.update { state ->
-                    state.copy(
-                        moviesState = MovieListMoviesState.Success(movies),
-                        currentPage = 1
-                    )
-                }
-            } catch (e: Exception) {
-                _uiState.update {
-                    it.copy(
-                        moviesState = MovieListMoviesState.Error(e.message ?: "Search error")
-                    )
-                }
-            }
+        if (movieFilters.genre.isNotBlank()) {
+            map["genres.name"] = movieFilters.genre
         }
-    }
 
-    private fun loadMovies() {
-        viewModelScope.launch {
-            try {
-                _uiState.update { it.copy(moviesState = MovieListMoviesState.Loading) }
-                val movies = movieRepository.getMovies()
-                _uiState.update {
-                    it.copy(moviesState = MovieListMoviesState.Success(movies))
-                }
-            } catch (e: Exception) {
-                _uiState.update {
-                    it.copy(
-                        moviesState = MovieListMoviesState.Error(e.message ?: "Unknown error")
-                    )
-                }
-            }
-        }
+        movieFilters.year?.let { map["year"] = it.toString() }
+
+        movieFilters.rating?.let { map["rating.kp"] = it.toString() }
+
+        return map
     }
 }
 
 data class MovieListUiState(
     val moviesState: MovieListMoviesState = MovieListMoviesState.Loading,
-    val searchQuery: String? = null,
+    val searchQuery: String = "",
     val currentPage: Int = 1,
     val isLoadingNextPage: Boolean = false,
-    val favoriteIds: Set<Int> = emptySet()
+    val favoriteIds: Set<Int> = emptySet(),
+    val filters: MovieFilters = MovieFilters(),
 )
 
 sealed class MovieListMoviesState {

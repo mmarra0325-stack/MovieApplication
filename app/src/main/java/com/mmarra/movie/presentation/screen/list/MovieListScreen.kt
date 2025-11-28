@@ -3,18 +3,24 @@ package com.mmarra.movie.presentation.screen.list
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.FilterAlt
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -22,9 +28,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
@@ -35,32 +39,59 @@ import com.mmarra.movie.presentation.ui_kit.MovieCard
 @Composable
 fun MovieListScreen(
     onMovieClick: (Int) -> Unit,
+    onOpenFilters: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: MovieListViewModel = hiltViewModel()
 ) {
-    var searchQuery by remember { mutableStateOf("") }
     val uiState by viewModel.uiState.collectAsState()
     val listState = rememberLazyListState()
 
     Column(modifier = modifier.fillMaxSize()) {
-        TextField(
-            value = searchQuery,
-            onValueChange = { searchQuery = it },
-            placeholder = { Text("Искать фильм...") },
-            singleLine = true,
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
-            keyboardActions = KeyboardActions(onSearch = { viewModel.searchMovies(searchQuery) }),
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-            trailingIcon = {
-                if (searchQuery.isNotBlank()) {
-                    IconButton(onClick = { searchQuery = "" }) {
-                        Icon(Icons.Default.Close, contentDescription = "Clear search")
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            TextField(
+                value = uiState.searchQuery,
+                onValueChange = { viewModel.updateSearchQuery(it) },
+                placeholder = { Text("Искать фильм...") },
+                singleLine = true,
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(end = 12.dp),
+                keyboardActions = KeyboardActions(
+                    onSearch = { viewModel.searchMovies() }
+                ),
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                trailingIcon = {
+                    if (uiState.searchQuery.isNotBlank()) {
+                        IconButton(onClick = { viewModel.updateSearchQuery("") }) {
+                            Icon(Icons.Default.Close, contentDescription = null)
+                        }
                     }
                 }
+            )
+
+            val hasActiveFilters = uiState.filters.genre.isNotBlank() ||
+                    uiState.filters.year != null || uiState.filters.rating != null
+
+            BadgedBox(
+                badge = {
+                    if (hasActiveFilters) {
+                        Badge(
+                            modifier = Modifier.size(14.dp),
+                            containerColor = MaterialTheme.colorScheme.secondary
+                        )
+                    }
+                }
+            ) {
+                IconButton(onClick = onOpenFilters) {
+                    Icon(Icons.Default.FilterAlt, contentDescription = "Фильтры")
+                }
             }
-        )
+        }
 
         Box(modifier = Modifier.fillMaxSize()) {
             when (val state = uiState.moviesState) {
@@ -71,7 +102,7 @@ fun MovieListScreen(
                 is MovieListMoviesState.Success -> {
                     if (state.movies.isEmpty()) {
                         Text(
-                            text = if (uiState.searchQuery != null) {
+                            text = if (uiState.searchQuery != "") {
                                 "No movies found for '${uiState.searchQuery}'"
                             } else {
                                 "No movies found"

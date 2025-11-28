@@ -17,6 +17,7 @@ import com.mmarra.movie.navigation.components.BottomNavigationBar
 import com.mmarra.movie.navigation.components.TopBar
 import com.mmarra.movie.presentation.screen.detail.MovieDetailScreen
 import com.mmarra.movie.presentation.screen.favorites.FavoriteMoviesScreen
+import com.mmarra.movie.presentation.screen.filters.FiltersScreen
 import com.mmarra.movie.presentation.screen.list.MovieListScreen
 
 @Composable
@@ -42,8 +43,13 @@ fun NavigationGraph() {
                 MovieListScreen(
                     onMovieClick = { id ->
                         navController.navigate(Screen.MovieDetail(id).route)
-                    }
+                    },
+                    onOpenFilters = { navController.navigate(Screen.Filters.route) }
                 )
+            }
+
+            composable(Screen.Filters.route) {
+                FiltersScreen(onBack = { navController.popBackStack() })
             }
 
             composable(Screen.FavoriteMovies.route) {

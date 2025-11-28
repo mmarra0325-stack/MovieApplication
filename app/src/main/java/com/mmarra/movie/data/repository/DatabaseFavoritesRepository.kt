@@ -17,11 +17,11 @@ class DatabaseFavoritesRepository @Inject constructor(
     private val movieRepository: MovieRepository,
 ) : FavoritesRepository {
 
-    override fun observeFavorites(): Flow<List<Movie>> =
-        dao.observeAll().map { list -> list.map { it.toMovie() } }
+    override fun observeFavorites(): Flow<List<Movie>> {
+        return dao.observeAll().map { list -> list.map { it.toMovie() } }
+    }
 
-    override fun observeIsFavorite(id: Int): Flow<Boolean> =
-        dao.observeIsFavorite(id)
+    override fun observeIsFavorite(id: Int): Flow<Boolean> = dao.observeIsFavorite(id)
 
     override suspend fun addToFavorites(movie: Movie) {
         dao.upsert(movie.toFavoriteEntity())
@@ -31,11 +31,9 @@ class DatabaseFavoritesRepository @Inject constructor(
         dao.deleteById(id)
     }
 
-    override suspend fun getById(id: Int): Movie? =
-        dao.getById(id)?.toMovie()
+    override suspend fun getById(id: Int): Movie? = dao.getById(id)?.toMovie()
 
-    override suspend fun isFavorite(id: Int): Boolean =
-        dao.getById(id) != null
+    override suspend fun isFavorite(id: Int): Boolean = dao.getById(id) != null
 
     override suspend fun toggleFavorite(shortMovie: Movie): Boolean {
         val movieId = shortMovie.id
@@ -45,10 +43,9 @@ class DatabaseFavoritesRepository @Inject constructor(
             removeFromFavorites(movieId)
             false
         } else {
-            // пробуем загрузить полную версию
             val detailMovie = try {
                 movieRepository.getMovieDetails(movieId)
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 null
             }
 
@@ -56,7 +53,7 @@ class DatabaseFavoritesRepository @Inject constructor(
 
             addToFavorites(movieToSave)
 
-            detailMovie != null   // true = сохранили полный фильм
+            detailMovie != null
         }
     }
 }
