@@ -1,7 +1,11 @@
 package com.mmarra.movie.di
 
-import com.mmarra.movie.data.repository.MockMovieRepository
-import com.mmarra.movie.data.repository.MovieRepository
+import com.mmarra.movie.data.repository.DatabaseFavoritesRepository
+import com.mmarra.movie.data.repository.LocalFiltersRepository
+import com.mmarra.movie.data.repository.NetworkMovieRepository
+import com.mmarra.movie.domain.repository.FavoritesRepository
+import com.mmarra.movie.domain.repository.FiltersRepository
+import com.mmarra.movie.domain.repository.MovieRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -15,6 +19,18 @@ abstract class AppModule {
     @Binds
     @Singleton
     abstract fun bindMovieRepository(
-        mockMovieRepository: MockMovieRepository
+        networkMovieRepository: NetworkMovieRepository
     ): MovieRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindFiltersRepository(
+        filtersRepository: LocalFiltersRepository,
+    ): FiltersRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindFavoriteMovieRepository(
+        databaseFavoritesRepository: DatabaseFavoritesRepository,
+    ): FavoritesRepository
 }
