@@ -11,7 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import com.mmarra.movie.presentation.screen.list.components.MovieCard
+import com.mmarra.movie.presentation.ui_kit.MovieCard
 
 @Composable
 fun FavoriteMoviesScreen(
@@ -22,9 +22,12 @@ fun FavoriteMoviesScreen(
     val uiState by viewModel.uiState.collectAsState()
 
     Box(modifier = modifier.fillMaxSize()) {
+
         when {
             uiState.isLoading -> {
-                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                CircularProgressIndicator(
+                    modifier = Modifier.align(Alignment.Center)
+                )
             }
 
             uiState.emptyMoviesList -> {
@@ -41,8 +44,13 @@ fun FavoriteMoviesScreen(
                         .fillMaxSize()
                 ) {
                     items(uiState.movies) { movie ->
+
                         MovieCard(
                             movie = movie,
+                            isFavorite = true,
+                            onToggleFavorite = {
+                                viewModel.removeFromFavorites(movie.id)
+                            },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(vertical = 8.dp)

@@ -1,6 +1,6 @@
 package com.mmarra.movie.di
 
-import com.mmarra.movie.data.repository.DataBaseFavoritesRepository
+import com.mmarra.movie.data.repository.DatabaseFavoritesRepository
 import com.mmarra.movie.data.repository.NetworkMovieRepository
 import com.mmarra.movie.domain.repository.FavoritesRepository
 import com.mmarra.movie.domain.repository.MovieRepository
@@ -23,6 +23,6 @@ abstract class AppModule {
     @Binds
     @Singleton
     abstract fun bindFavoriteMovieRepository(
-        databaseFavoritesRepository: DataBaseFavoritesRepository,
+        databaseFavoritesRepository: DatabaseFavoritesRepository,
     ): FavoritesRepository
 }

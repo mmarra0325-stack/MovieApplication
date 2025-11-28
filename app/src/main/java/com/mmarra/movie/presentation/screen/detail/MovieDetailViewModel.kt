@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mmarra.movie.domain.repository.MovieRepository
 import com.mmarra.movie.domain.model.Movie
+import com.mmarra.movie.domain.repository.FavoritesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,7 +14,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MovieDetailViewModel @Inject constructor(
-    private val repository: MovieRepository
+    private val movieRepository: MovieRepository,
+    private val favoritesRepository: FavoritesRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<MovieDetailUiState>(MovieDetailUiState.Loading)
@@ -21,15 +23,24 @@ class MovieDetailViewModel @Inject constructor(
 
     fun loadMovie(movieId: Int) {
         viewModelScope.launch {
-            try {
-                val movie = repository.getMovieDetails(movieId)
-                if (movie != null) {
-                    _uiState.value = MovieDetailUiState.Success(movie)
-                } else {
-                    _uiState.value = MovieDetailUiState.Error("Movie not found")
+            val localMovie = favoritesRepository.getById(movieId)
+            if (localMovie != null) {
+                _uiState.value = MovieDetailUiState.Success(localMovie)
+            } else {
+                _uiState.value = MovieDetailUiState.Loading
+            }
+
+            if (localMovie == null) {
+                try {
+                    val remoteMovie = movieRepository.getMovieDetails(movieId)
+                    if (remoteMovie != null) {
+                        _uiState.value = MovieDetailUiState.Success(remoteMovie)
+                    } else {
+                        _uiState.value = MovieDetailUiState.Error("Movie not found")
+                    }
+                } catch (e: Exception) {
+                    _uiState.value = MovieDetailUiState.Error(e.message ?: "Unknown error")
                 }
-            } catch (e: Exception) {
-                _uiState.value = MovieDetailUiState.Error(e.message ?: "Unknown error")
             }
         }
     }

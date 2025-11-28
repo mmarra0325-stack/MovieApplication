@@ -35,6 +35,12 @@ class FavoriteMoviesViewModel @Inject constructor(
                 }
         }
     }
+
+    fun removeFromFavorites(movieId: Int) {
+        viewModelScope.launch {
+            favoritesRepository.removeFromFavorites(movieId)
+        }
+    }
 }
 
 data class FavoriteMoviesUiState(

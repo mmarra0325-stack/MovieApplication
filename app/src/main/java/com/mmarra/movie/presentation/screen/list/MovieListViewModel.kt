@@ -2,23 +2,47 @@ package com.mmarra.movie.presentation.screen.list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mmarra.movie.domain.repository.MovieRepository
 import com.mmarra.movie.domain.model.Movie
+import com.mmarra.movie.domain.repository.FavoritesRepository
+import com.mmarra.movie.domain.repository.MovieRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MovieListViewModel @Inject constructor(
-    private val repository: MovieRepository
+    private val movieRepository: MovieRepository,
+    private val favoritesRepository: FavoritesRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(MovieListUiState())
     val uiState: StateFlow<MovieListUiState> = _uiState.asStateFlow()
+
+    init {
+        observeFavorites()
+        loadMovies()
+    }
+
+    private fun observeFavorites() {
+        viewModelScope.launch {
+            favoritesRepository.observeFavorites()
+                .map { movies -> movies.map { it.id }.toSet() }
+                .collect { favoriteIds ->
+                    _uiState.update { it.copy(favoriteIds = favoriteIds) }
+                }
+        }
+    }
+
+    fun toggleFavorite(shortMovie: Movie) {
+        viewModelScope.launch {
+            favoritesRepository.toggleFavorite(shortMovie)
+        }
+    }
 
     fun loadNextPage() {
         if (_uiState.value.isLoadingNextPage) return
@@ -31,20 +55,22 @@ class MovieListViewModel @Inject constructor(
                 val filters = mapOf("page" to nextPage.toString(), "limit" to "10")
 
                 val nextMovies = if (_uiState.value.searchQuery != null) {
-                    repository.searchMovies(_uiState.value.searchQuery!!, filters)
+                    movieRepository.searchMovies(_uiState.value.searchQuery!!, filters)
                 } else {
-                    repository.getMovies(filters)
+                    movieRepository.getMovies(filters)
                 }
 
                 _uiState.update { state ->
-                    val currentMovies = (state.moviesState as? MovieListMoviesState.Success)?.movies ?: emptyList()
+                    val currentMovies =
+                        (state.moviesState as? MovieListMoviesState.Success)?.movies ?: emptyList()
+
                     state.copy(
                         moviesState = MovieListMoviesState.Success(currentMovies + nextMovies),
                         currentPage = nextPage,
                         isLoadingNextPage = false
                     )
                 }
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 _uiState.update { it.copy(isLoadingNextPage = false) }
             }
         }
@@ -56,14 +82,14 @@ class MovieListViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(
                         moviesState = MovieListMoviesState.Loading,
-                        searchQuery = if (query.isBlank()) null else query
+                        searchQuery = query.ifBlank { null },
                     )
                 }
 
                 val movies = if (query.isBlank()) {
-                    repository.getMovies()
+                    movieRepository.getMovies()
                 } else {
-                    repository.searchMovies(query)
+                    movieRepository.searchMovies(query)
                 }
 
                 _uiState.update { state ->
@@ -82,15 +108,11 @@ class MovieListViewModel @Inject constructor(
         }
     }
 
-    init {
-        loadMovies()
-    }
-
     private fun loadMovies() {
         viewModelScope.launch {
             try {
                 _uiState.update { it.copy(moviesState = MovieListMoviesState.Loading) }
-                val movies = repository.getMovies()
+                val movies = movieRepository.getMovies()
                 _uiState.update {
                     it.copy(moviesState = MovieListMoviesState.Success(movies))
                 }
@@ -109,7 +131,8 @@ data class MovieListUiState(
     val moviesState: MovieListMoviesState = MovieListMoviesState.Loading,
     val searchQuery: String? = null,
     val currentPage: Int = 1,
-    val isLoadingNextPage: Boolean = false
+    val isLoadingNextPage: Boolean = false,
+    val favoriteIds: Set<Int> = emptySet()
 )
 
 sealed class MovieListMoviesState {

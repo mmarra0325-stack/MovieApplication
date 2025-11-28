@@ -30,7 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import com.mmarra.movie.presentation.screen.list.components.MovieCard
+import com.mmarra.movie.presentation.ui_kit.MovieCard
 
 @Composable
 fun MovieListScreen(
@@ -71,7 +71,11 @@ fun MovieListScreen(
                 is MovieListMoviesState.Success -> {
                     if (state.movies.isEmpty()) {
                         Text(
-                            text = if (uiState.searchQuery != null) "No movies found for '${uiState.searchQuery}'" else "No movies found",
+                            text = if (uiState.searchQuery != null) {
+                                "No movies found for '${uiState.searchQuery}'"
+                            } else {
+                                "No movies found"
+                            },
                             modifier = Modifier.align(Alignment.Center)
                         )
                     } else {
@@ -81,8 +85,15 @@ fun MovieListScreen(
                         ) {
                             items(state.movies.size) { index ->
                                 val movie = state.movies[index]
+
+                                val isFavorite = movie.id in uiState.favoriteIds
+
                                 MovieCard(
                                     movie = movie,
+                                    isFavorite = isFavorite,
+                                    onToggleFavorite = {
+                                        viewModel.toggleFavorite(movie)
+                                    },
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .padding(vertical = 8.dp)
