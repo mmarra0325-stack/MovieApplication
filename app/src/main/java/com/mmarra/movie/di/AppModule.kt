@@ -1,7 +1,9 @@
 package com.mmarra.movie.di
 
-import com.mmarra.movie.domain.repository.MovieRepository
+import com.mmarra.movie.data.repository.DataBaseFavoritesRepository
 import com.mmarra.movie.data.repository.NetworkMovieRepository
+import com.mmarra.movie.domain.repository.FavoritesRepository
+import com.mmarra.movie.domain.repository.MovieRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -18,4 +20,9 @@ abstract class AppModule {
         networkMovieRepository: NetworkMovieRepository
     ): MovieRepository
 
+    @Binds
+    @Singleton
+    abstract fun bindFavoriteMovieRepository(
+        databaseFavoritesRepository: DataBaseFavoritesRepository,
+    ): FavoritesRepository
 }
