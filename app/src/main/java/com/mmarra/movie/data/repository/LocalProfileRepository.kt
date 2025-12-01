@@ -23,6 +23,7 @@ class LocalProfileRepository @Inject constructor(
         private val KEY_JOB = stringPreferencesKey("job")
         private val KEY_PHOTO_URI = stringPreferencesKey("photo_uri")
         private val KEY_RESUME_URL = stringPreferencesKey("resume_url")
+        private val KEY_NOTIFICATION_TIME = stringPreferencesKey("notification_time")
     }
 
     override fun observeProfile(): Flow<Profile> = context.profileDataStore.data.map { prefs ->
@@ -31,6 +32,7 @@ class LocalProfileRepository @Inject constructor(
             job = prefs[KEY_JOB] ?: "",
             photoUri = prefs[KEY_PHOTO_URI] ?: "",
             resumeUrl = prefs[KEY_RESUME_URL] ?: "",
+            notificationTime = prefs[KEY_NOTIFICATION_TIME] ?: "",
         )
     }
 
@@ -40,6 +42,7 @@ class LocalProfileRepository @Inject constructor(
             prefs[KEY_JOB] = profile.job
             prefs[KEY_PHOTO_URI] = profile.photoUri
             prefs[KEY_RESUME_URL] = profile.resumeUrl
+            prefs[KEY_NOTIFICATION_TIME] = profile.notificationTime
         }
     }
 }

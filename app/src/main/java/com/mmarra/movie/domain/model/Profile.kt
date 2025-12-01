@@ -5,4 +5,5 @@ data class Profile(
     val job: String,
     val photoUri: String,
     val resumeUrl: String,
+    val notificationTime: String,
 )

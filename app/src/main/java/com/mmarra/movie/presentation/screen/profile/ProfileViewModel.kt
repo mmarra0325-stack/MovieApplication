@@ -30,7 +30,8 @@ class ProfileViewModel @Inject constructor(
                     username = profile.username,
                     job = profile.job,
                     photoUri = profile.photoUri,
-                    resumeUrl = profile.resumeUrl
+                    resumeUrl = profile.resumeUrl,
+                    notificationTime = profile.notificationTime,
                 )
             }
         }
@@ -47,7 +48,8 @@ class ProfileViewModel @Inject constructor(
                 username = _state.value.username,
                 job = _state.value.job,
                 photoUri = _state.value.photoUri,
-                resumeUrl = _state.value.resumeUrl
+                resumeUrl = _state.value.resumeUrl,
+                notificationTime = _state.value.notificationTime,
             )
 
             repository.updateProfile(profile)
@@ -60,4 +62,5 @@ data class ProfileUiState(
     val job: String = "",
     val photoUri: String = "",
     val resumeUrl: String = "",
+    val notificationTime: String = "",
 )
