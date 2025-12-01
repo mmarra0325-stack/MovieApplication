@@ -18,4 +18,10 @@ sealed class BottomNavItem(
         icon = R.drawable.ic_favorite_movies,
         title = R.string.favorite_movies_title
     )
+
+    data object Profile : BottomNavItem(
+        route = "profile",
+        icon = R.drawable.ic_profile,
+        title = R.string.profile_title
+    )
 }
