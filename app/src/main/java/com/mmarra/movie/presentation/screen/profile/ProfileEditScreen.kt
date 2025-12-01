@@ -207,10 +207,7 @@ fun ProfileEditScreen(
         )
 
         Button(
-            onClick = {
-                viewModel.updateUserInfo()
-                onBack()
-            },
+            onClick = { if (viewModel.updateUserInfo()) { onBack() } },
             modifier = Modifier.padding(top = 20.dp),
         ) {
             Text("Сохранить изменения")

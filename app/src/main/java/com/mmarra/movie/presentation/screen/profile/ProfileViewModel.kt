@@ -45,7 +45,16 @@ class ProfileViewModel @Inject constructor(
     fun onResumeUrlChange(resumeUrl: String) = _state.update { it.copy(resumeUrl = resumeUrl) }
 
     fun onNotificationTimeChange(time: String) {
-        _state.update { it.copy(notificationTime = time, notificationTimeError = null) }
+        val timeError = if (time.isNotBlank() && !validateNotificationTime(time)) {
+            "Некорректный формат времени"
+        } else null
+
+        _state.update {
+            it.copy(
+                notificationTime = time,
+                notificationTimeError = timeError,
+            )
+        }
     }
 
     private fun validateNotificationTime(text: String): Boolean {
@@ -58,24 +67,25 @@ class ProfileViewModel @Inject constructor(
         return hour in 0..23 && minute in 0..59
     }
 
-    fun updateUserInfo() {
+    fun updateUserInfo(): Boolean {
+        val state = _state.value
+
+        if (state.notificationTime.isNotBlank()) {
+            if (!validateNotificationTime(state.notificationTime)) {
+                _state.update { it.copy(notificationTimeError = "Некорректный формат времени") }
+                return false
+            }
+        }
+
+        _state.update { it.copy(notificationTimeError = null) }
+
         viewModelScope.launch {
             val profile = Profile(
                 username = _state.value.username,
                 job = _state.value.job,
                 photoUri = _state.value.photoUri,
                 resumeUrl = _state.value.resumeUrl,
-                notificationTime = if (_state.value.notificationTime.isNotBlank()) {
-                    if (!validateNotificationTime(_state.value.notificationTime)) {
-                        _state.update { it.copy(notificationTimeError = "Некорректный формат времени") }
-                        ""
-                    } else {
-                        _state.update { it.copy(notificationTimeError = null) }
-                        _state.value.notificationTime
-                    }
-                } else {
-                    ""
-                },
+                notificationTime = state.notificationTime.ifBlank { "" },
             )
 
             if (profile.notificationTime.isNotBlank()) {
@@ -83,6 +93,8 @@ class ProfileViewModel @Inject constructor(
             }
             repository.updateProfile(profile)
         }
+
+        return true
     }
 }
 
