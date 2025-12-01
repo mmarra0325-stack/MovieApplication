@@ -17,7 +17,9 @@ import com.mmarra.movie.R
 fun TopBar(
     titleRes: Int,
     showBackButton: Boolean = false,
-    onBackClick: () -> Unit = {}
+    showEditButton: Boolean = false,
+    onBackClick: () -> Unit = {},
+    onEditClick: () -> Unit = {},
 ) {
     TopAppBar(
         title = { Text(stringResource(id = titleRes)) },
@@ -33,6 +35,16 @@ fun TopBar(
         },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer
-        )
+        ),
+        actions = {
+            if (showEditButton) {
+                IconButton(onClick = onEditClick) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_edit),
+                        contentDescription = "Edit Profile"
+                    )
+                }
+            }
+        }
     )
 }
