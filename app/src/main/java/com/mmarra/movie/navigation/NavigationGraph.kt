@@ -19,6 +19,8 @@ import com.mmarra.movie.presentation.screen.detail.MovieDetailScreen
 import com.mmarra.movie.presentation.screen.favorites.FavoriteMoviesScreen
 import com.mmarra.movie.presentation.screen.filters.FiltersScreen
 import com.mmarra.movie.presentation.screen.list.MovieListScreen
+import com.mmarra.movie.presentation.screen.profile.ProfileEditScreen
+import com.mmarra.movie.presentation.screen.profile.ProfileScreen
 
 @Composable
 fun NavigationGraph() {
@@ -60,6 +62,14 @@ fun NavigationGraph() {
                 )
             }
 
+            composable(Screen.Profile.route) {
+                ProfileScreen()
+            }
+
+            composable(Screen.ProfileEdit.route) {
+                ProfileEditScreen(onBack = { navController.popBackStack() })
+            }
+
             composable(
                 route = Screen.MovieDetail.routeWithArg,
                 arguments = listOf(
@@ -82,6 +92,7 @@ fun BottomBar(navController: NavController) {
     val items = listOf(
         BottomNavItem.Movies,
         BottomNavItem.FavoriteMovies,
+        BottomNavItem.Profile,
     )
 
     if (currentRoute?.startsWith("movie_detail") == true) {
@@ -111,6 +122,8 @@ fun TopBar(navController: NavController) {
     val titleRes = when (backStackEntry?.destination?.route) {
         Screen.Movies.route -> R.string.movies_title
         Screen.FavoriteMovies.route -> R.string.favorite_movies_title
+        Screen.Profile.route -> R.string.profile_title
+        Screen.ProfileEdit.route -> R.string.profile_edit_title
         Screen.MovieDetail.routeWithArg -> R.string.movie_detail_title
         else -> R.string.app_name
     }
@@ -118,6 +131,8 @@ fun TopBar(navController: NavController) {
     TopBar(
         titleRes = titleRes,
         showBackButton = showBack,
-        onBackClick = { navController.popBackStack() }
+        showEditButton = backStackEntry?.destination?.route == Screen.Profile.route,
+        onBackClick = { navController.popBackStack() },
+        onEditClick = { navController.navigate(Screen.ProfileEdit.route) }
     )
 }

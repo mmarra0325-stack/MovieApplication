@@ -69,7 +69,7 @@ fun ProfileScreen(
                 try {
                     val uri = url.toUri()
                     val request = DownloadManager.Request(uri)
-                        .setTitle("Резюме скачивается")
+                        .setTitle("Резюме")
                         .setDescription(uri.lastPathSegment ?: "Файл")
                         .setNotificationVisibility(
                             DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED
