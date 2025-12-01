@@ -7,6 +7,7 @@ import com.mmarra.movie.domain.model.MovieFilters
 import com.mmarra.movie.domain.repository.FavoritesRepository
 import com.mmarra.movie.domain.repository.FiltersRepository
 import com.mmarra.movie.domain.repository.MovieRepository
+import com.mmarra.movie.domain.repository.NotificationRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,16 +21,26 @@ import javax.inject.Inject
 class MovieListViewModel @Inject constructor(
     private val movieRepository: MovieRepository,
     private val favoritesRepository: FavoritesRepository,
-    private val filtersRepository: FiltersRepository
+    private val filtersRepository: FiltersRepository,
+    private val notificationRepository: NotificationRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(MovieListUiState())
     val uiState: StateFlow<MovieListUiState> = _uiState.asStateFlow()
 
     init {
+        observeNotifications()
         observeFavorites()
         observeFilters()
         loadMovies()
+    }
+
+    private fun observeNotifications() {
+        viewModelScope.launch {
+            notificationRepository.observePopup().collect { wasAccepted ->
+                _uiState.update { it.copy(showPermissionDialog = !wasAccepted) }
+            }
+        }
     }
 
     private fun observeFavorites() {
@@ -220,10 +231,22 @@ class MovieListViewModel @Inject constructor(
 
         return map
     }
+
+    fun onPermissionGranted() {
+        viewModelScope.launch {
+            notificationRepository.allowNotifications()
+            _uiState.update { it.copy(showPermissionDialog = false) }
+        }
+    }
+
+    fun onSkipPermission() {
+        _uiState.update { it.copy(showPermissionDialog = false) }
+    }
 }
 
 data class MovieListUiState(
     val moviesState: MovieListMoviesState = MovieListMoviesState.Loading,
+    val showPermissionDialog: Boolean = false,
     val searchQuery: String = "",
     val currentPage: Int = 1,
     val isLoadingNextPage: Boolean = false,

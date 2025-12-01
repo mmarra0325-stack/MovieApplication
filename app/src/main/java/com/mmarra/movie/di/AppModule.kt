@@ -2,11 +2,13 @@ package com.mmarra.movie.di
 
 import com.mmarra.movie.data.repository.DatabaseFavoritesRepository
 import com.mmarra.movie.data.repository.LocalFiltersRepository
+import com.mmarra.movie.data.repository.LocalNotificationRepository
 import com.mmarra.movie.data.repository.LocalProfileRepository
 import com.mmarra.movie.data.repository.NetworkMovieRepository
 import com.mmarra.movie.domain.repository.FavoritesRepository
 import com.mmarra.movie.domain.repository.FiltersRepository
 import com.mmarra.movie.domain.repository.MovieRepository
+import com.mmarra.movie.domain.repository.NotificationRepository
 import com.mmarra.movie.domain.repository.ProfileRepository
 import dagger.Binds
 import dagger.Module
@@ -41,4 +43,10 @@ abstract class AppModule {
     abstract fun bindProfileRepository(
         localProfileRepository: LocalProfileRepository,
     ): ProfileRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindProfileNotificationRepository(
+        localNotificationRepository: LocalNotificationRepository,
+    ): NotificationRepository
 }

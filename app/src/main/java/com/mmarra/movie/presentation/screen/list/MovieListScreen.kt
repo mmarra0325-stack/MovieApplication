@@ -1,5 +1,8 @@
 package com.mmarra.movie.presentation.screen.list
 
+import android.Manifest
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,6 +18,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.FilterAlt
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.CircularProgressIndicator
@@ -45,6 +49,45 @@ fun MovieListScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val listState = rememberLazyListState()
+
+    val requestPermissionLauncher =
+        rememberLauncherForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) { granted ->
+            if (granted) {
+                viewModel.onPermissionGranted()
+            } else {
+                viewModel.onSkipPermission()
+            }
+        }
+
+    if (uiState.showPermissionDialog) {
+        AlertDialog(
+            onDismissRequest = { viewModel.onSkipPermission() },
+            title = { Text("Разрешите отправку уведомления") },
+            text = { Text("Разрешите нам отправлять вам уведомления о выходе новых фильмов") },
+            confirmButton = {
+                Text(
+                    text = "Разрешить",
+                    modifier = Modifier
+                        .clickable {
+                            requestPermissionLauncher.launch(
+                                Manifest.permission.POST_NOTIFICATIONS
+                            )
+                        }
+                        .padding(12.dp)
+                )
+            },
+            dismissButton = {
+                Text(
+                    text = "Позже",
+                    modifier = Modifier
+                        .clickable { viewModel.onSkipPermission() }
+                        .padding(12.dp)
+                )
+            }
+        )
+    }
 
     Column(modifier = modifier.fillMaxSize()) {
         Row(
