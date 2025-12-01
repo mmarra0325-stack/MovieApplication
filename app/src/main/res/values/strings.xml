@@ -2,6 +2,9 @@
     <string name="app_name">MovieApp</string>
 
     <string name="movies_title">Фильмы</string>
+    <string name="favorite_movies_title">Избранное</string>
+    <string name="profile_title">Профиль</string>
+    <string name="profile_edit_title">Редактирование профиля</string>
     <string name="movie_detail_title">Детали фильма</string>
     <string name="movie_not_found">Movie not found</string>
 </resources>
