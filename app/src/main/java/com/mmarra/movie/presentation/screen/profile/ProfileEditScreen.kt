@@ -1,6 +1,7 @@
 package com.mmarra.movie.presentation.screen.profile
 
 import android.Manifest
+import android.app.TimePickerDialog
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
@@ -17,9 +18,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -40,6 +44,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.mmarra.movie.R
 import java.io.OutputStream
+import java.util.Calendar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -52,6 +57,7 @@ fun ProfileEditScreen(
     val state by viewModel.state.collectAsState()
 
     var showDialog by remember { mutableStateOf(false) }
+    val showTimePicker = remember { mutableStateOf(false) }
 
     val cameraLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.TakePicturePreview()
@@ -171,13 +177,33 @@ fun ProfileEditScreen(
             )
         }
 
+        if (showTimePicker.value) {
+            val calendar = Calendar.getInstance()
+            TimePickerDialog(
+                context,
+                { _, hour, minute ->
+                    val formatted = "%02d:%02d".format(hour, minute)
+                    viewModel.onNotificationTimeChange(formatted)
+                },
+                calendar.get(Calendar.HOUR_OF_DAY),
+                calendar.get(Calendar.MINUTE),
+                true
+            ).show()
+
+            showTimePicker.value = false
+        }
+
         TextFields(
             username = state.username,
             post = state.job,
             resumeUrl = state.resumeUrl,
+            notificationTime = state.notificationTime,
+            notificationTimeError = state.notificationTimeError,
             onUsernameChange = viewModel::onUsernameTextChange,
             onPostChange = viewModel::onJobTextChange,
             onResumeUrlChange = viewModel::onResumeUrlChange,
+            onNotificationTimeChange = viewModel::onNotificationTimeChange,
+            onClockClick = { showTimePicker.value = true },
         )
 
         Button(
@@ -197,9 +223,13 @@ private fun TextFields(
     username: String,
     post: String,
     resumeUrl: String,
+    notificationTime: String,
+    notificationTimeError: String? = null,
     onUsernameChange: (String) -> Unit,
     onPostChange: (String) -> Unit,
     onResumeUrlChange: (String) -> Unit,
+    onNotificationTimeChange: (String) -> Unit,
+    onClockClick: () -> Unit,
 ) {
     OutlinedTextField(
         value = username,
@@ -223,6 +253,24 @@ private fun TextFields(
         value = resumeUrl,
         onValueChange = onResumeUrlChange,
         label = { Text("Ссылка на ваше резюме") },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 16.dp, start = 16.dp, end = 16.dp),
+    )
+
+    OutlinedTextField(
+        value = notificationTime,
+        onValueChange = { onNotificationTimeChange(it) },
+        label = { Text("Время выхода нового фильма") },
+        trailingIcon = {
+            Icon(
+                imageVector = Icons.Default.DateRange,
+                contentDescription = null,
+                modifier = Modifier.clickable { onClockClick() }
+            )
+        },
+        isError = notificationTimeError != null,
+        supportingText = { notificationTimeError?.let { Text(text = it, color = Color.Red) } },
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = 16.dp, start = 16.dp, end = 16.dp),

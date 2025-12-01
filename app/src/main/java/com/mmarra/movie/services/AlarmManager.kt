@@ -18,8 +18,8 @@ class AlarmManager @Inject constructor(
     @param:ApplicationContext private val context: Context,
 ) {
 
-    fun schedule(profile: Profile) {
-        val parts = profile.notificationTime.split(":")
+    fun schedule(notificationTime: String) {
+        val parts = notificationTime.split(":")
 
         val hours = parts[0].toInt()
         val minutes = parts[1].toInt()
