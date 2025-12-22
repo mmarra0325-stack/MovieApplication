@@ -11,6 +11,16 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/data" />
+            <option value="$PROJECT_DIR$/domain" />
+            <option value="$PROJECT_DIR$/presentation" />
+            <option value="$PROJECT_DIR$/presentation/screens" />
+            <option value="$PROJECT_DIR$/presentation/screens/detail" />
+            <option value="$PROJECT_DIR$/presentation/screens/favorites" />
+            <option value="$PROJECT_DIR$/presentation/screens/filters" />
+            <option value="$PROJECT_DIR$/presentation/screens/list" />
+            <option value="$PROJECT_DIR$/presentation/screens/profile" />
+            <option value="$PROJECT_DIR$/presentation/ui_kit" />
           </set>
         </option>
       </GradleProjectSettings>

@@ -15,12 +15,12 @@ import androidx.navigation.navArgument
 import com.mmarra.movie.R
 import com.mmarra.movie.navigation.components.BottomNavigationBar
 import com.mmarra.movie.navigation.components.TopBar
-import com.mmarra.movie.presentation.screen.detail.MovieDetailScreen
-import com.mmarra.movie.presentation.screen.favorites.FavoriteMoviesScreen
-import com.mmarra.movie.presentation.screen.filters.FiltersScreen
-import com.mmarra.movie.presentation.screen.list.MovieListScreen
-import com.mmarra.movie.presentation.screen.profile.ProfileEditScreen
-import com.mmarra.movie.presentation.screen.profile.ProfileScreen
+import com.mmarra.presentation.screens.detail.MovieDetailScreen
+import com.mmarra.presentation.screens.favorites.FavoriteMoviesScreen
+import com.mmarra.presentation.screens.filters.FiltersScreen
+import com.mmarra.presentation.screens.list.MovieListScreen
+import com.mmarra.presentation.screens.profile.ProfileEditScreen
+import com.mmarra.presentation.screens.profile.ProfileScreen
 
 @Composable
 fun NavigationGraph() {
