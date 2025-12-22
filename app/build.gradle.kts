@@ -3,9 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
 
-    alias(libs.plugins.jetbrains.kotlin.serialization)
-
-    id("kotlin-kapt")
+    id("com.google.devtools.ksp")
     id("com.google.dagger.hilt.android")
 }
 
@@ -15,7 +13,7 @@ android {
 
     defaultConfig {
         applicationId = "com.mmarra.movie"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
@@ -41,16 +39,19 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
 dependencies {
-
-    // icons
-    implementation(libs.androidx.material.icons.extended)
-
-    // coil
-    implementation(libs.coil.compose)
+    implementation(project(":data"))
+    implementation(project(":domain"))
+    implementation(project(":presentation:screens:detail"))
+    implementation(project(":presentation:screens:favorites"))
+    implementation(project(":presentation:screens:filters"))
+    implementation(project(":presentation:screens:list"))
+    implementation(project(":presentation:screens:profile"))
+    implementation(project(":presentation:ui_kit"))
 
     // viewmodel
     implementation(libs.androidx.lifecycle.viewmodel.compose)
@@ -78,6 +79,6 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     implementation(libs.hilt.android)
-    kapt(libs.hilt.android.compiler)
+    ksp(libs.hilt.android.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
 }
